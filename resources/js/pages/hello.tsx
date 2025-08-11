@@ -1,14 +1,25 @@
 import { Head } from '@inertiajs/react';
+import axios from 'axios';
 import { JSX, useState } from 'react';
 
 export default function Hello(): JSX.Element {
     const [inputValue, setInputVlaue] = useState('');
-    const [message, setMessage] = useState('Hello!');
+    // const [message, setMessage] = useState('Hello!');
+    const [serverMessage, setServerMessage] = useState('Hello!');
 
     // フォーム送信時の処理
     const handleSubmit = (e: { preventDefault: () => void }) => {
         e.preventDefault();
-        setMessage('こんにちは, ' + inputValue + 'さん！');
+        // setMessage('こんにちは, ' + inputValue + 'さん！');
+        axios
+            .post('/update-message', { number: inputValue })
+            .then((response) => {
+                console.log(response);
+                setServerMessage(response.data.message);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     };
     return (
         <div style={{ padding: '20px' }}>
@@ -20,14 +31,15 @@ export default function Hello(): JSX.Element {
                 }}
                 className="pb-5 text-3xl"
             >
-                Hello Page
+                {/* Hello Page */}
+                welcome page
             </h1>
             <p
                 style={{
                     fontSize: '20px',
                 }}
             >
-                {message}
+                {serverMessage}
             </p>
             <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
                 <input
